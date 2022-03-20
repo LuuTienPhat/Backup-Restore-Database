@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backup Restore Database", "DXApplication1\Backup Restore Database.csproj", "{D7F30967-7495-4682-B4EE-AA5B75719983}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backup Restore Database", "Backup Restore Database.csproj", "{D7F30967-7495-4682-B4EE-AA5B75719983}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
