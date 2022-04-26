@@ -20,14 +20,14 @@ namespace Backup_Restore
         /// </summary>
 
         public static SqlConnection conn = new SqlConnection();
-        public static string connstr = "";
+        public static string CONNECTION_STRING = "";
         public static SqlDataAdapter sqlDataAdapter;
         //public static string connstr_publisher = "Data Source=MSI;Initial Catalog=TN_CSDLPT;Integrated Security=True";
 
         public static SqlDataReader myReader;
-        public static string SERVER_NAME = "MSI";
-        public static string LOGIN = "sa";
-        public static string PASSWORD = "123";
+        public static string SERVER_NAME = "";
+        public static string LOGIN = "";
+        public static string PASSWORD = "";
 
         public static string database = "tempdb";
         public static int startYear = 2016; //để cho cmbNK tự động dựa vào năm này
@@ -59,33 +59,53 @@ namespace Backup_Restore
         /// {1} device_name
         /// {2} position in backupset
         /// </summary>
-        public static string RESTORE_DATABASE = "ALTER DATABASE [{0}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE\n" +
-                                                "USE tempdb\n" +
-                                                "RESTORE DATABASE [{0}] FROM [{1}] WITH FILE = {2}, REPLACE\n" +
-                                                "ALTER DATABASE [{0}]  SET MULTI_USER";
+        public static string RESTORE_DATABASE =
+                            "ALTER DATABASE [{0}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE\n" +
+                            "USE tempdb\n" +
+                            "RESTORE DATABASE [{0}] FROM [{1}] WITH FILE = {2}, REPLACE\n" +
+                            "ALTER DATABASE [{0}]  SET MULTI_USER";
+
+
+        /// <summary>
+        /// {0} database_name
+        /// {1} backup_log path
+        /// {2} position 
+        /// {3} point_in_time
+        /// </summary>
+        public static string RESTORE_DATABASE_TO_POINT_IN_TIME =
+                            "ALTER DATABASE [{0}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE\n" +
+                            "BACKUP LOG [{0}] TO DISK = '{1}' WITH INIT\n" +
+                            "USE MASTER\n" +
+                            "RESTORE DATABASE [{0}] FROM DISK = '{2}' WITH NORECOVERY\n" +
+                            "RESTORE DATABASE [{0}] FROM DISK = '{1}' WITH STOPAT = '{3}'" +
+                            "ALTER DATABASE [{0}]  SET MULTI_USER";
 
         public static string DELETE_BACKUP = "";
 
+        /// <summary>
+        /// {0} device_name 
+        /// </summary>
+        public static string DELETE_BACKUP_DEVICE = "EXEC sp_dropdevice '{0}', 'delfile' ";
 
-        public static int ConnectToSQL()
+
+        public static bool ConnectToSQL()
         {
             if (Program.conn != null && Program.conn.State == ConnectionState.Open)
                 Program.conn.Close();
             try
             {
-                Program.connstr = "Data Source=" + Program.SERVER_NAME + ";Initial Catalog=" +
+                Program.CONNECTION_STRING = "Data Source=" + Program.SERVER_NAME + ";Initial Catalog=" +
                       Program.database + ";User ID=" +
                       Program.LOGIN + ";password=" + Program.PASSWORD;
-                Program.conn.ConnectionString = Program.connstr;
+                Program.conn.ConnectionString = Program.CONNECTION_STRING;
                 Program.conn.Open();
-                return 1;
+                return true;
             }
 
             catch (Exception e)
             {
-                XtraMessageBox.Show("Lỗi kết nối cơ sở dữ liệu.\nBạn xem lại user name và password.\n " + e.Message, "Lỗi", MessageBoxButtons.OK);
-                //MessageBox.Show("Lỗi kết nối cơ sở dữ liệu.\nBạn xem lại user name và password.\n " + e.Message, "", MessageBoxButtons.OK);
-                return 0;
+                CustomMessageBox.Show(CustomMessageBox.Type.ERROR, "Lỗi kết nối cơ sở dữ liệu.\nBạn xem lại user name và password.\n " + e.Message);
+                return false;
             }
         }
 
@@ -113,7 +133,7 @@ namespace Backup_Restore
             catch (SqlException ex)
             {
                 Program.conn.Close();
-                MessageBox.Show(ex.Message);
+                XtraMessageBox.Show(ex.Message);
                 return null;
             }
         }
@@ -152,11 +172,11 @@ namespace Backup_Restore
             {
                 if (ex.Message.Contains("Error converting data type varchar to int"))
                 {
-                    MessageBox.Show("Bạn format Cell lại cột \"Ngày Thi\" qua kiểu Number hoặc mở File Excel, Import lại.");
+                    CustomMessageBox.Show(CustomMessageBox.Type.WARNING, "Bạn format Cell lại cột \"Ngày Thi\" qua kiểu Number hoặc mở File Excel, Import lại.");
                 }
                 else
                 {
-                    MessageBox.Show(errStr + "\n" + ex.Message);
+                    CustomMessageBox.Show(CustomMessageBox.Type.WARNING, errStr + "\n" + ex.Message);
                     conn.Close();
                     return ex.State; // lấy trạng thái lỗi gởi từ RAISERROR trong SQL Server qua
                 }
@@ -170,6 +190,16 @@ namespace Backup_Restore
         public static bool KTra_Nhay(char kytu)
         {
             return kytu == '\'';
+        }
+
+        public static string FirstCharToUpper(this string input)
+        {
+            switch (input)
+            {
+                case null: throw new ArgumentNullException(nameof(input));
+                case "": throw new ArgumentException($"{nameof(input)} cannot be empty", nameof(input));
+                default: return input[0].ToString().ToUpper() + input.Substring(1);
+            }
         }
 
         // cái này để tìm trên 1 dòng dùng nhiều cột làm điều kiện trên binding Source
@@ -222,7 +252,7 @@ namespace Backup_Restore
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+            Application.Run(new LoginForm());
         }
     }
 }
