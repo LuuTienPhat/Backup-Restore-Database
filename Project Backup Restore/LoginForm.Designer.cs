@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LoginForm));
             this.panelControl5 = new DevExpress.XtraEditors.PanelControl();
             this.panelControl1 = new DevExpress.XtraEditors.PanelControl();
+            this.cbxServerName = new DevExpress.XtraEditors.ComboBoxEdit();
             this.lbServerName = new DevExpress.XtraEditors.LabelControl();
             this.labelControl1 = new DevExpress.XtraEditors.LabelControl();
             this.panelControl4 = new DevExpress.XtraEditors.PanelControl();
@@ -45,11 +46,12 @@
             this.labelControl4 = new DevExpress.XtraEditors.LabelControl();
             this.txtLoginName = new DevExpress.XtraEditors.TextEdit();
             this.lbTitle = new DevExpress.XtraEditors.LabelControl();
-            this.txtServerName = new DevExpress.XtraEditors.TextEdit();
+            this.splashScreenManager1 = new DevExpress.XtraSplashScreen.SplashScreenManager(this, typeof(global::Backup_Restore.WaitForm), true, true);
             ((System.ComponentModel.ISupportInitialize)(this.panelControl5)).BeginInit();
             this.panelControl5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.panelControl1)).BeginInit();
             this.panelControl1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.cbxServerName.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.panelControl4)).BeginInit();
             this.panelControl4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.panelControl3)).BeginInit();
@@ -58,7 +60,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.panelControl2)).BeginInit();
             this.panelControl2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.txtLoginName.Properties)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtServerName.Properties)).BeginInit();
             this.SuspendLayout();
             // 
             // panelControl5
@@ -79,14 +80,24 @@
             // panelControl1
             // 
             this.panelControl1.BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.NoBorder;
+            this.panelControl1.Controls.Add(this.cbxServerName);
             this.panelControl1.Controls.Add(this.lbServerName);
             this.panelControl1.Controls.Add(this.labelControl1);
-            this.panelControl1.Controls.Add(this.txtServerName);
             this.panelControl1.Location = new System.Drawing.Point(8, 95);
             this.panelControl1.Margin = new System.Windows.Forms.Padding(4);
             this.panelControl1.Name = "panelControl1";
             this.panelControl1.Size = new System.Drawing.Size(308, 82);
             this.panelControl1.TabIndex = 17;
+            // 
+            // cbxServerName
+            // 
+            this.cbxServerName.Location = new System.Drawing.Point(7, 32);
+            this.cbxServerName.Name = "cbxServerName";
+            this.cbxServerName.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
+            this.cbxServerName.Size = new System.Drawing.Size(295, 24);
+            this.cbxServerName.TabIndex = 18;
+            this.cbxServerName.QueryPopUp += new System.ComponentModel.CancelEventHandler(this.CmbServerName_QueryPopUp);
             // 
             // lbServerName
             // 
@@ -280,18 +291,9 @@
             this.lbTitle.TabIndex = 10;
             this.lbTitle.Text = "Connect to SQL SERVER";
             // 
-            // txtServerName
+            // splashScreenManager1
             // 
-            this.txtServerName.EditValue = "MSI";
-            this.txtServerName.Location = new System.Drawing.Point(7, 31);
-            this.txtServerName.Margin = new System.Windows.Forms.Padding(4);
-            this.txtServerName.Name = "txtServerName";
-            this.txtServerName.Properties.Appearance.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtServerName.Properties.Appearance.Options.UseFont = true;
-            this.txtServerName.Size = new System.Drawing.Size(295, 24);
-            this.txtServerName.TabIndex = 0;
-            this.txtServerName.ToolTip = "Type the name of the instance of the Database Engine";
-            this.txtServerName.ToolTipIconType = DevExpress.Utils.ToolTipIconType.Information;
+            this.splashScreenManager1.ClosingDelay = 500;
             // 
             // LoginForm
             // 
@@ -306,14 +308,15 @@
             this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.Name = "LoginForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Connect";
-            this.Load += new System.EventHandler(this.LoginForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.panelControl5)).EndInit();
             this.panelControl5.ResumeLayout(false);
             this.panelControl5.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.panelControl1)).EndInit();
             this.panelControl1.ResumeLayout(false);
             this.panelControl1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.cbxServerName.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.panelControl4)).EndInit();
             this.panelControl4.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.panelControl3)).EndInit();
@@ -324,7 +327,6 @@
             this.panelControl2.ResumeLayout(false);
             this.panelControl2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.txtLoginName.Properties)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtServerName.Properties)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -347,6 +349,7 @@
         private DevExpress.XtraEditors.LabelControl labelControl4;
         private DevExpress.XtraEditors.TextEdit txtLoginName;
         private DevExpress.XtraEditors.LabelControl lbTitle;
-        private DevExpress.XtraEditors.TextEdit txtServerName;
+        private DevExpress.XtraEditors.ComboBoxEdit cbxServerName;
+        private DevExpress.XtraSplashScreen.SplashScreenManager splashScreenManager1;
     }
 }

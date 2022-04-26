@@ -1,11 +1,15 @@
 ﻿using DevExpress.XtraEditors;
+using DevExpress.XtraSplashScreen;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.Sql;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -29,6 +33,26 @@ namespace Backup_Restore
             panelControl4.Left = (this.ClientSize.Width - panelControl4.Width) / 2;
         }
 
+        //btnConnect
+        private void btnConnect_Click(object sender, EventArgs e)
+        {
+            if (isInputValid() == true)
+            {
+                Program.SERVER_NAME = cbxServerName.Text.Trim();
+                Program.LOGIN = txtLoginName.Text.Trim();
+                Program.PASSWORD = txtPassword.Text.Trim();
+
+                if (Program.ConnectToSQL())
+                {
+                    this.Hide();
+                    MainForm mainForm = new MainForm();
+                    mainForm.ShowDialog();
+                    this.Close();
+                }
+            }
+        }
+
+        //btnCanel
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
@@ -37,11 +61,12 @@ namespace Backup_Restore
             System.Windows.Forms.Application.Exit();
         }
 
+        //Check if input is valid
         private Boolean isInputValid()
         {
             int count = 0;
 
-            if (txtServerName.Text.Trim().Length == 0)
+            if (cbxServerName.Text.Trim().Length == 0)
             {
                 count++;
                 lbServerName.Visible = true;
@@ -79,26 +104,32 @@ namespace Backup_Restore
             return count == 0;
         }
 
-        private void btnConnect_Click(object sender, EventArgs e)
+        private void GetDataSources()
         {
-            if (isInputValid() == true)
+            string ServerName = Environment.MachineName;
+            RegistryView registryView = Environment.Is64BitOperatingSystem ? RegistryView.Registry64 : RegistryView.Registry32;
+            using (RegistryKey hklm = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryView))
             {
-                Program.SERVER_NAME = txtServerName.Text.Trim();
-                Program.LOGIN = txtLoginName.Text.Trim();
-                Program.PASSWORD = txtPassword.Text.Trim();
-
-                if(Program.ConnectToSQL() == 1)
+                RegistryKey instanceKey = hklm.OpenSubKey(@"SOFTWARE\Microsoft\Microsoft SQL Server\Instance Names\SQL", false);
+                if (instanceKey != null)
                 {
-                    this.Hide();
-                    MainForm mainForm = new MainForm();
-                    mainForm.ShowDialog();
-                    this.Close();
+                    cbxServerName.Properties.Items.Clear();
+                    foreach (var instanceName in instanceKey.GetValueNames())
+                    {
+                        Console.WriteLine(ServerName + "\\" + instanceName);
+                        if (instanceName.ToString().Equals("MSSQLSERVER"))
+                            cbxServerName.Properties.Items.Add(ServerName);
+                        else
+                            cbxServerName.Properties.Items.Add(ServerName + "\\" + instanceName);
+                    }
                 }
             }
         }
 
-        private void LoginForm_Load(object sender, EventArgs e)
+        private void CmbServerName_QueryPopUp(object sender, CancelEventArgs e)
         {
+            //getServerList();
+            WaitForm.ShowWaitForm(this, GetDataSources, "Please Wait", "Loading Servers...");
 
         }
     }
