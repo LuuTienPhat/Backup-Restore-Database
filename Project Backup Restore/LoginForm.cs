@@ -42,12 +42,18 @@ namespace Backup_Restore
                 Program.LOGIN = txtLoginName.Text.Trim();
                 Program.PASSWORD = txtPassword.Text.Trim();
 
-                if (Program.ConnectToSQL())
+                bool result = WaitForm.ShowWaitForm(this, Program.ConnectToSQL, "Connecting...", "Please wait!");
+
+                if (result == true)
                 {
                     this.Hide();
                     MainForm mainForm = new MainForm();
                     mainForm.ShowDialog();
                     this.Close();
+                }
+                else
+                {
+                    CustomMessageBox.Show(CustomMessageBox.Type.ERROR, "Error while connecting SQL Server\nPlease check the Servername, Username and Password again.");
                 }
             }
         }
@@ -126,7 +132,7 @@ namespace Backup_Restore
             }
         }
 
-        private void CmbServerName_QueryPopUp(object sender, CancelEventArgs e)
+        private void cbxServerName_QueryPopUp(object sender, CancelEventArgs e)
         {
             //getServerList();
             WaitForm.ShowWaitForm(this, GetDataSources, "Please Wait", "Loading Servers...");
