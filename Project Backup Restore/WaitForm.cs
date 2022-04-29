@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Backup_Restore
@@ -41,7 +42,7 @@ namespace Backup_Restore
         {
         }
 
-        public static void ShowWaitForm(Form parrent, Action callback, string caption, string description)
+        public static void ShowWaitForm(DevExpress.XtraEditors.XtraForm parrent, Action callback, string caption, string description)
         {
             //Open Wait Form
             SplashScreenManager.ShowForm(parrent, typeof(WaitForm), true, true, false);
@@ -50,15 +51,33 @@ namespace Backup_Restore
 
             try
             {
-                parrent.Opacity = 0.9d;
                 callback();
             }
             finally
             {
                 //Close Wait Form
                 SplashScreenManager.CloseForm(false);
-                parrent.Opacity = 1.0d;
             }
+        }
+
+        public static bool ShowWaitForm(DevExpress.XtraEditors.XtraForm parrent, Func<bool> callback, string caption, string description)
+        {
+            bool result;
+            //Open Wait Form
+            SplashScreenManager.ShowForm(parrent, typeof(WaitForm), true, true, false);
+            SplashScreenManager.Default.SetWaitFormDescription(description);
+            SplashScreenManager.Default.SetWaitFormCaption(caption);
+
+            try
+            {
+                result = callback();
+            }
+            finally
+            {
+                SplashScreenManager.CloseForm(false);
+            }
+
+            return result;
         }
     }
 }
