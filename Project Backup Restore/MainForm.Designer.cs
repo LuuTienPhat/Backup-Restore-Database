@@ -51,23 +51,26 @@ namespace Backup_Restore
             this.barDockControlLeft = new DevExpress.XtraBars.BarDockControl();
             this.barDockControlRight = new DevExpress.XtraBars.BarDockControl();
             this.barButtonItem1 = new DevExpress.XtraBars.BarButtonItem();
-            this.databasesGridControl = new DevExpress.XtraGrid.GridControl();
-            this.databasesBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.btnDeleteBackupDevice = new DevExpress.XtraBars.BarButtonItem();
+            this.btnDeleteBackup = new DevExpress.XtraBars.BarButtonItem();
+            this.gcDatabases = new DevExpress.XtraGrid.GridControl();
+            this.bdsDatabases = new System.Windows.Forms.BindingSource(this.components);
             this.dS = new Backup_Restore.DS();
-            this.gridView1 = new DevExpress.XtraGrid.Views.Grid.GridView();
+            this.gvDatabases = new DevExpress.XtraGrid.Views.Grid.GridView();
             this.colname = new DevExpress.XtraGrid.Columns.GridColumn();
-            this.databasesTableAdapter = new Backup_Restore.DSTableAdapters.databasesTableAdapter();
+            this.taDatabases = new Backup_Restore.DSTableAdapters.databasesTableAdapter();
             this.tableAdapterManager = new Backup_Restore.DSTableAdapters.TableAdapterManager();
             this.panelControl2 = new DevExpress.XtraEditors.PanelControl();
             this.sP_STT_BACKUPGridControl = new DevExpress.XtraGrid.GridControl();
-            this.sP_STT_BACKUPBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.gridView2 = new DevExpress.XtraGrid.Views.Grid.GridView();
+            this.bdsBackups = new System.Windows.Forms.BindingSource(this.components);
+            this.gvBackups = new DevExpress.XtraGrid.Views.Grid.GridView();
             this.colposition = new DevExpress.XtraGrid.Columns.GridColumn();
             this.colname1 = new DevExpress.XtraGrid.Columns.GridColumn();
             this.colbackup_start_date = new DevExpress.XtraGrid.Columns.GridColumn();
             this.coluser_name = new DevExpress.XtraGrid.Columns.GridColumn();
             this.sidePanel1 = new DevExpress.XtraEditors.SidePanel();
-            this.stackPanel2 = new DevExpress.Utils.Layout.StackPanel();
+            this.lbInstruction = new DevExpress.XtraEditors.LabelControl();
+            this.panelRestorePoint = new DevExpress.Utils.Layout.StackPanel();
             this.labelControl1 = new DevExpress.XtraEditors.LabelControl();
             this.datePicker = new DevExpress.XtraEditors.DateEdit();
             this.timePicker = new DevExpress.XtraEditors.TimeEdit();
@@ -77,23 +80,30 @@ namespace Backup_Restore
             this.labelControl3 = new DevExpress.XtraEditors.LabelControl();
             this.txtPosition = new DevExpress.XtraEditors.TextEdit();
             this.chbxDeleteAllBackupBefore = new DevExpress.XtraEditors.CheckEdit();
-            this.sP_STT_BACKUPTableAdapter = new Backup_Restore.DSTableAdapters.SP_STT_BACKUPTableAdapter();
-            this.backup_devicesBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.backup_devicesTableAdapter = new Backup_Restore.DSTableAdapters.backup_devicesTableAdapter();
+            this.ds1 = new Backup_Restore.DS();
+            this.bdsBackupset = new System.Windows.Forms.BindingSource(this.components);
+            this.taBackups = new Backup_Restore.DSTableAdapters.SP_STT_BACKUPTableAdapter();
+            this.bdsBackupDevices = new System.Windows.Forms.BindingSource(this.components);
+            this.taBackupDevices = new Backup_Restore.DSTableAdapters.backup_devicesTableAdapter();
             this.panelControl1 = new DevExpress.XtraEditors.PanelControl();
+            this.popupMenu = new DevExpress.XtraBars.PopupMenu(this.components);
+            this.popupMenu1 = new DevExpress.XtraBars.PopupMenu(this.components);
+            this.bdsKeys = new System.Windows.Forms.BindingSource(this.components);
+            this.taKeys = new Backup_Restore.DSTableAdapters.keysTableAdapter();
+            this.taBackupset = new Backup_Restore.DSTableAdapters.backupsetTableAdapter();
             ((System.ComponentModel.ISupportInitialize)(this.barManager1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.databasesGridControl)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.databasesBindingSource)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gcDatabases)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bdsDatabases)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dS)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gvDatabases)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.panelControl2)).BeginInit();
             this.panelControl2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.sP_STT_BACKUPGridControl)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.sP_STT_BACKUPBindingSource)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gridView2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bdsBackups)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gvBackups)).BeginInit();
             this.sidePanel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.stackPanel2)).BeginInit();
-            this.stackPanel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.panelRestorePoint)).BeginInit();
+            this.panelRestorePoint.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.datePicker.Properties.CalendarTimeProperties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.datePicker.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.timePicker.Properties)).BeginInit();
@@ -102,9 +112,14 @@ namespace Backup_Restore
             ((System.ComponentModel.ISupportInitialize)(this.txtDatabaseName.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtPosition.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chbxDeleteAllBackupBefore.Properties)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.backup_devicesBindingSource)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ds1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bdsBackupset)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bdsBackupDevices)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.panelControl1)).BeginInit();
             this.panelControl1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.popupMenu)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.popupMenu1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bdsKeys)).BeginInit();
             this.SuspendLayout();
             // 
             // barManager1
@@ -124,8 +139,10 @@ namespace Backup_Restore
             this.btnNewDevice,
             this.btnDisconnect,
             this.btnSettings,
-            this.chbxToPointInTime});
-            this.barManager1.MaxItemId = 9;
+            this.chbxToPointInTime,
+            this.btnDeleteBackupDevice,
+            this.btnDeleteBackup});
+            this.barManager1.MaxItemId = 11;
             // 
             // bar1
             // 
@@ -177,7 +194,7 @@ namespace Backup_Restore
             this.chbxToPointInTime.ImageOptions.SvgImageSize = new System.Drawing.Size(30, 30);
             this.chbxToPointInTime.Name = "chbxToPointInTime";
             this.chbxToPointInTime.PaintStyle = DevExpress.XtraBars.BarItemPaintStyle.CaptionGlyph;
-            this.chbxToPointInTime.CheckedChanged += new DevExpress.XtraBars.ItemClickEventHandler(this.barCheckItem1_CheckedChanged);
+            this.chbxToPointInTime.CheckedChanged += new DevExpress.XtraBars.ItemClickEventHandler(this.chbxToPointInTime_CheckedChanged);
             // 
             // btnNewDevice
             // 
@@ -207,6 +224,8 @@ namespace Backup_Restore
             this.btnSettings.ImageOptions.SvgImageSize = new System.Drawing.Size(30, 30);
             this.btnSettings.Name = "btnSettings";
             this.btnSettings.PaintStyle = DevExpress.XtraBars.BarItemPaintStyle.CaptionGlyph;
+            this.btnSettings.Visibility = DevExpress.XtraBars.BarItemVisibility.Never;
+            this.btnSettings.VisibleInSearchMenu = false;
             // 
             // btnDisconnect
             // 
@@ -225,16 +244,16 @@ namespace Backup_Restore
             this.barDockControlTop.Location = new System.Drawing.Point(0, 0);
             this.barDockControlTop.Manager = this.barManager1;
             this.barDockControlTop.Margin = new System.Windows.Forms.Padding(4);
-            this.barDockControlTop.Size = new System.Drawing.Size(1089, 42);
+            this.barDockControlTop.Size = new System.Drawing.Size(1129, 42);
             // 
             // barDockControlBottom
             // 
             this.barDockControlBottom.CausesValidation = false;
             this.barDockControlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.barDockControlBottom.Location = new System.Drawing.Point(0, 614);
+            this.barDockControlBottom.Location = new System.Drawing.Point(0, 660);
             this.barDockControlBottom.Manager = this.barManager1;
             this.barDockControlBottom.Margin = new System.Windows.Forms.Padding(4);
-            this.barDockControlBottom.Size = new System.Drawing.Size(1089, 0);
+            this.barDockControlBottom.Size = new System.Drawing.Size(1129, 0);
             // 
             // barDockControlLeft
             // 
@@ -243,63 +262,78 @@ namespace Backup_Restore
             this.barDockControlLeft.Location = new System.Drawing.Point(0, 42);
             this.barDockControlLeft.Manager = this.barManager1;
             this.barDockControlLeft.Margin = new System.Windows.Forms.Padding(4);
-            this.barDockControlLeft.Size = new System.Drawing.Size(0, 572);
+            this.barDockControlLeft.Size = new System.Drawing.Size(0, 618);
             // 
             // barDockControlRight
             // 
             this.barDockControlRight.CausesValidation = false;
             this.barDockControlRight.Dock = System.Windows.Forms.DockStyle.Right;
-            this.barDockControlRight.Location = new System.Drawing.Point(1089, 42);
+            this.barDockControlRight.Location = new System.Drawing.Point(1129, 42);
             this.barDockControlRight.Manager = this.barManager1;
             this.barDockControlRight.Margin = new System.Windows.Forms.Padding(4);
-            this.barDockControlRight.Size = new System.Drawing.Size(0, 572);
+            this.barDockControlRight.Size = new System.Drawing.Size(0, 618);
             // 
             // barButtonItem1
             // 
-            this.barButtonItem1.Caption = "Backup";
+            this.barButtonItem1.Caption = "Delete Backup";
             this.barButtonItem1.Id = 0;
             this.barButtonItem1.ImageOptions.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("barButtonItem1.ImageOptions.SvgImage")));
             this.barButtonItem1.Name = "barButtonItem1";
             // 
-            // databasesGridControl
+            // btnDeleteBackupDevice
             // 
-            this.databasesGridControl.DataSource = this.databasesBindingSource;
-            this.databasesGridControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.databasesGridControl.EmbeddedNavigator.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.databasesGridControl.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.databasesGridControl.Location = new System.Drawing.Point(0, 0);
-            this.databasesGridControl.MainView = this.gridView1;
-            this.databasesGridControl.Margin = new System.Windows.Forms.Padding(0);
-            this.databasesGridControl.MenuManager = this.barManager1;
-            this.databasesGridControl.Name = "databasesGridControl";
-            this.databasesGridControl.Size = new System.Drawing.Size(245, 572);
-            this.databasesGridControl.TabIndex = 9;
-            this.databasesGridControl.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
-            this.gridView1});
-            this.databasesGridControl.ViewRegistered += new DevExpress.XtraGrid.ViewOperationEventHandler(this.databasesGridControl_ViewRegistered);
-            this.databasesGridControl.Click += new System.EventHandler(this.databasesGridControl_Click);
+            this.btnDeleteBackupDevice.Caption = "Delete Backup Device";
+            this.btnDeleteBackupDevice.Id = 9;
+            this.btnDeleteBackupDevice.ImageOptions.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("btnDeleteBackupDevice.ImageOptions.SvgImage")));
+            this.btnDeleteBackupDevice.Name = "btnDeleteBackupDevice";
+            this.btnDeleteBackupDevice.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnDeleteBackupDevice_ItemClick);
             // 
-            // databasesBindingSource
+            // btnDeleteBackup
             // 
-            this.databasesBindingSource.DataMember = "databases";
-            this.databasesBindingSource.DataSource = this.dS;
+            this.btnDeleteBackup.Caption = "Delete Backup";
+            this.btnDeleteBackup.Id = 10;
+            this.btnDeleteBackup.ImageOptions.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("btnDeleteBackup.ImageOptions.SvgImage")));
+            this.btnDeleteBackup.Name = "btnDeleteBackup";
+            this.btnDeleteBackup.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnDeleteBackup_ItemClick);
+            // 
+            // gcDatabases
+            // 
+            this.gcDatabases.DataSource = this.bdsDatabases;
+            this.gcDatabases.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gcDatabases.EmbeddedNavigator.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.gcDatabases.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.gcDatabases.Location = new System.Drawing.Point(0, 0);
+            this.gcDatabases.MainView = this.gvDatabases;
+            this.gcDatabases.Margin = new System.Windows.Forms.Padding(0);
+            this.gcDatabases.MenuManager = this.barManager1;
+            this.gcDatabases.Name = "gcDatabases";
+            this.gcDatabases.Size = new System.Drawing.Size(245, 618);
+            this.gcDatabases.TabIndex = 9;
+            this.gcDatabases.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
+            this.gvDatabases});
+            // 
+            // bdsDatabases
+            // 
+            this.bdsDatabases.DataMember = "databases";
+            this.bdsDatabases.DataSource = this.dS;
             // 
             // dS
             // 
             this.dS.DataSetName = "DS";
             this.dS.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema;
             // 
-            // gridView1
+            // gvDatabases
             // 
-            this.gridView1.Columns.AddRange(new DevExpress.XtraGrid.Columns.GridColumn[] {
+            this.gvDatabases.Columns.AddRange(new DevExpress.XtraGrid.Columns.GridColumn[] {
             this.colname});
-            this.gridView1.FocusRectStyle = DevExpress.XtraGrid.Views.Grid.DrawFocusRectStyle.None;
-            this.gridView1.GridControl = this.databasesGridControl;
-            this.gridView1.Name = "gridView1";
-            this.gridView1.OptionsBehavior.Editable = false;
-            this.gridView1.OptionsSelection.EnableAppearanceFocusedCell = false;
-            this.gridView1.OptionsView.ShowGroupPanel = false;
-            this.gridView1.OptionsView.ShowIndicator = false;
+            this.gvDatabases.FocusRectStyle = DevExpress.XtraGrid.Views.Grid.DrawFocusRectStyle.None;
+            this.gvDatabases.GridControl = this.gcDatabases;
+            this.gvDatabases.Name = "gvDatabases";
+            this.gvDatabases.OptionsBehavior.Editable = false;
+            this.gvDatabases.OptionsSelection.EnableAppearanceFocusedCell = false;
+            this.gvDatabases.OptionsView.ShowGroupPanel = false;
+            this.gvDatabases.OptionsView.ShowIndicator = false;
+            this.gvDatabases.RowCellClick += new DevExpress.XtraGrid.Views.Grid.RowCellClickEventHandler(this.gvDatabases_RowCellClick);
             // 
             // colname
             // 
@@ -311,14 +345,16 @@ namespace Backup_Restore
             this.colname.Visible = true;
             this.colname.VisibleIndex = 0;
             // 
-            // databasesTableAdapter
+            // taDatabases
             // 
-            this.databasesTableAdapter.ClearBeforeFill = true;
+            this.taDatabases.ClearBeforeFill = true;
             // 
             // tableAdapterManager
             // 
             this.tableAdapterManager.BackupDataSetBeforeUpdate = false;
+            this.tableAdapterManager.backupsetTableAdapter = null;
             this.tableAdapterManager.Connection = null;
+            this.tableAdapterManager.keysTableAdapter = null;
             this.tableAdapterManager.UpdateOrder = Backup_Restore.DSTableAdapters.TableAdapterManager.UpdateOrderOption.InsertUpdateDelete;
             // 
             // panelControl2
@@ -331,44 +367,47 @@ namespace Backup_Restore
             this.panelControl2.Location = new System.Drawing.Point(245, 42);
             this.panelControl2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.panelControl2.Name = "panelControl2";
-            this.panelControl2.Size = new System.Drawing.Size(844, 572);
+            this.panelControl2.Size = new System.Drawing.Size(884, 618);
             this.panelControl2.TabIndex = 9;
             // 
             // sP_STT_BACKUPGridControl
             // 
-            this.sP_STT_BACKUPGridControl.DataSource = this.sP_STT_BACKUPBindingSource;
-            this.sP_STT_BACKUPGridControl.EmbeddedNavigator.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.sP_STT_BACKUPGridControl.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.sP_STT_BACKUPGridControl.DataSource = this.bdsBackups;
+            this.sP_STT_BACKUPGridControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.sP_STT_BACKUPGridControl.Location = new System.Drawing.Point(0, 37);
-            this.sP_STT_BACKUPGridControl.MainView = this.gridView2;
+            this.sP_STT_BACKUPGridControl.MainView = this.gvBackups;
             this.sP_STT_BACKUPGridControl.Margin = new System.Windows.Forms.Padding(0);
             this.sP_STT_BACKUPGridControl.MenuManager = this.barManager1;
             this.sP_STT_BACKUPGridControl.Name = "sP_STT_BACKUPGridControl";
-            this.sP_STT_BACKUPGridControl.Size = new System.Drawing.Size(844, 367);
-            this.sP_STT_BACKUPGridControl.TabIndex = 0;
+            this.sP_STT_BACKUPGridControl.Size = new System.Drawing.Size(884, 413);
+            this.sP_STT_BACKUPGridControl.TabIndex = 8;
             this.sP_STT_BACKUPGridControl.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
-            this.gridView2});
-            this.sP_STT_BACKUPGridControl.Click += new System.EventHandler(this.sP_STT_BACKUPGridControl_Click);
+            this.gvBackups});
             // 
-            // sP_STT_BACKUPBindingSource
+            // bdsBackups
             // 
-            this.sP_STT_BACKUPBindingSource.DataMember = "SP_STT_BACKUP";
-            this.sP_STT_BACKUPBindingSource.DataSource = this.dS;
+            this.bdsBackups.DataMember = "SP_STT_BACKUP";
+            this.bdsBackups.DataSource = this.dS;
             // 
-            // gridView2
+            // gvBackups
             // 
-            this.gridView2.Columns.AddRange(new DevExpress.XtraGrid.Columns.GridColumn[] {
+            this.gvBackups.ActiveFilterEnabled = false;
+            this.gvBackups.Columns.AddRange(new DevExpress.XtraGrid.Columns.GridColumn[] {
             this.colposition,
             this.colname1,
             this.colbackup_start_date,
             this.coluser_name});
-            this.gridView2.FocusRectStyle = DevExpress.XtraGrid.Views.Grid.DrawFocusRectStyle.None;
-            this.gridView2.GridControl = this.sP_STT_BACKUPGridControl;
-            this.gridView2.Name = "gridView2";
-            this.gridView2.OptionsBehavior.Editable = false;
-            this.gridView2.OptionsSelection.EnableAppearanceFocusedCell = false;
-            this.gridView2.OptionsView.ShowGroupPanel = false;
-            this.gridView2.OptionsView.ShowIndicator = false;
+            this.gvBackups.FocusRectStyle = DevExpress.XtraGrid.Views.Grid.DrawFocusRectStyle.None;
+            this.gvBackups.GridControl = this.sP_STT_BACKUPGridControl;
+            this.gvBackups.Name = "gvBackups";
+            this.gvBackups.OptionsBehavior.Editable = false;
+            this.gvBackups.OptionsCustomization.AllowFilter = false;
+            this.gvBackups.OptionsCustomization.AllowSort = false;
+            this.gvBackups.OptionsMenu.EnableGroupPanelMenu = false;
+            this.gvBackups.OptionsSelection.EnableAppearanceFocusedCell = false;
+            this.gvBackups.OptionsView.ShowGroupPanel = false;
+            this.gvBackups.OptionsView.ShowIndicator = false;
+            this.gvBackups.RowCellClick += new DevExpress.XtraGrid.Views.Grid.RowCellClickEventHandler(this.gvBackups_RowCellClick);
             // 
             // colposition
             // 
@@ -380,7 +419,7 @@ namespace Backup_Restore
             // 
             // colname1
             // 
-            this.colname1.Caption = "Description";
+            this.colname1.Caption = "description";
             this.colname1.FieldName = "name";
             this.colname1.Name = "colname1";
             this.colname1.Visible = true;
@@ -388,7 +427,7 @@ namespace Backup_Restore
             // 
             // colbackup_start_date
             // 
-            this.colbackup_start_date.Caption = "Backup Date";
+            this.colbackup_start_date.Caption = "backup date";
             this.colbackup_start_date.DisplayFormat.FormatString = "dd/MM/yyyy HH:mm:ss";
             this.colbackup_start_date.DisplayFormat.FormatType = DevExpress.Utils.FormatType.DateTime;
             this.colbackup_start_date.FieldName = "backup_start_date";
@@ -398,7 +437,7 @@ namespace Backup_Restore
             // 
             // coluser_name
             // 
-            this.coluser_name.Caption = "User";
+            this.coluser_name.Caption = "username";
             this.coluser_name.FieldName = "user_name";
             this.coluser_name.Name = "coluser_name";
             this.coluser_name.Visible = true;
@@ -406,25 +445,44 @@ namespace Backup_Restore
             // 
             // sidePanel1
             // 
-            this.sidePanel1.Controls.Add(this.stackPanel2);
+            this.sidePanel1.Controls.Add(this.lbInstruction);
+            this.sidePanel1.Controls.Add(this.panelRestorePoint);
             this.sidePanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.sidePanel1.Location = new System.Drawing.Point(0, 404);
+            this.sidePanel1.Location = new System.Drawing.Point(0, 450);
             this.sidePanel1.Margin = new System.Windows.Forms.Padding(0);
             this.sidePanel1.Name = "sidePanel1";
-            this.sidePanel1.Size = new System.Drawing.Size(844, 168);
+            this.sidePanel1.Size = new System.Drawing.Size(884, 168);
             this.sidePanel1.TabIndex = 8;
             this.sidePanel1.Text = "sidePanel1";
             // 
-            // stackPanel2
+            // lbInstruction
             // 
-            this.stackPanel2.Controls.Add(this.labelControl1);
-            this.stackPanel2.Controls.Add(this.datePicker);
-            this.stackPanel2.Controls.Add(this.timePicker);
-            this.stackPanel2.Dock = System.Windows.Forms.DockStyle.Top;
-            this.stackPanel2.Location = new System.Drawing.Point(0, 1);
-            this.stackPanel2.Name = "stackPanel2";
-            this.stackPanel2.Size = new System.Drawing.Size(844, 60);
-            this.stackPanel2.TabIndex = 10;
+            this.lbInstruction.AllowHtmlString = true;
+            this.lbInstruction.Appearance.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbInstruction.Appearance.Options.UseFont = true;
+            this.lbInstruction.Appearance.Options.UseTextOptions = true;
+            this.lbInstruction.Appearance.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
+            this.lbInstruction.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.None;
+            this.lbInstruction.BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.Simple;
+            this.lbInstruction.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbInstruction.Location = new System.Drawing.Point(0, 61);
+            this.lbInstruction.Margin = new System.Windows.Forms.Padding(0);
+            this.lbInstruction.Name = "lbInstruction";
+            this.lbInstruction.Padding = new System.Windows.Forms.Padding(20, 0, 0, 0);
+            this.lbInstruction.Size = new System.Drawing.Size(884, 107);
+            this.lbInstruction.TabIndex = 11;
+            this.lbInstruction.Text = resources.GetString("lbInstruction.Text");
+            // 
+            // panelRestorePoint
+            // 
+            this.panelRestorePoint.Controls.Add(this.labelControl1);
+            this.panelRestorePoint.Controls.Add(this.datePicker);
+            this.panelRestorePoint.Controls.Add(this.timePicker);
+            this.panelRestorePoint.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelRestorePoint.Location = new System.Drawing.Point(0, 1);
+            this.panelRestorePoint.Name = "panelRestorePoint";
+            this.panelRestorePoint.Size = new System.Drawing.Size(884, 60);
+            this.panelRestorePoint.TabIndex = 10;
             // 
             // labelControl1
             // 
@@ -433,14 +491,14 @@ namespace Backup_Restore
             this.labelControl1.Location = new System.Drawing.Point(20, 23);
             this.labelControl1.Margin = new System.Windows.Forms.Padding(20, 0, 20, 0);
             this.labelControl1.Name = "labelControl1";
-            this.labelControl1.Size = new System.Drawing.Size(72, 13);
+            this.labelControl1.Size = new System.Drawing.Size(73, 13);
             this.labelControl1.TabIndex = 7;
-            this.labelControl1.Text = "Backup Point:";
+            this.labelControl1.Text = "Restore Point:";
             // 
             // datePicker
             // 
             this.datePicker.EditValue = null;
-            this.datePicker.Location = new System.Drawing.Point(112, 20);
+            this.datePicker.Location = new System.Drawing.Point(113, 20);
             this.datePicker.Margin = new System.Windows.Forms.Padding(0, 0, 20, 0);
             this.datePicker.MenuManager = this.barManager1;
             this.datePicker.Name = "datePicker";
@@ -456,7 +514,7 @@ namespace Backup_Restore
             // timePicker
             // 
             this.timePicker.EditValue = new System.DateTime(2022, 4, 10, 0, 0, 0, 0);
-            this.timePicker.Location = new System.Drawing.Point(282, 20);
+            this.timePicker.Location = new System.Drawing.Point(283, 20);
             this.timePicker.Margin = new System.Windows.Forms.Padding(0, 0, 20, 0);
             this.timePicker.MenuManager = this.barManager1;
             this.timePicker.Name = "timePicker";
@@ -479,7 +537,7 @@ namespace Backup_Restore
             this.stackPanel1.Location = new System.Drawing.Point(0, 0);
             this.stackPanel1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 0);
             this.stackPanel1.Name = "stackPanel1";
-            this.stackPanel1.Size = new System.Drawing.Size(844, 37);
+            this.stackPanel1.Size = new System.Drawing.Size(884, 37);
             this.stackPanel1.TabIndex = 7;
             // 
             // labelControl2
@@ -544,35 +602,72 @@ namespace Backup_Restore
             this.chbxDeleteAllBackupBefore.Size = new System.Drawing.Size(335, 20);
             this.chbxDeleteAllBackupBefore.TabIndex = 6;
             // 
-            // sP_STT_BACKUPTableAdapter
+            // ds1
             // 
-            this.sP_STT_BACKUPTableAdapter.ClearBeforeFill = true;
+            this.ds1.DataSetName = "DS";
+            this.ds1.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema;
             // 
-            // backup_devicesBindingSource
+            // bdsBackupset
             // 
-            this.backup_devicesBindingSource.DataMember = "backup_devices";
-            this.backup_devicesBindingSource.DataSource = this.dS;
+            this.bdsBackupset.DataMember = "backupset";
+            this.bdsBackupset.DataSource = this.dS;
             // 
-            // backup_devicesTableAdapter
+            // taBackups
             // 
-            this.backup_devicesTableAdapter.ClearBeforeFill = true;
+            this.taBackups.ClearBeforeFill = true;
+            // 
+            // bdsBackupDevices
+            // 
+            this.bdsBackupDevices.DataMember = "backup_devices";
+            this.bdsBackupDevices.DataSource = this.dS;
+            // 
+            // taBackupDevices
+            // 
+            this.taBackupDevices.ClearBeforeFill = true;
             // 
             // panelControl1
             // 
             this.panelControl1.BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.NoBorder;
-            this.panelControl1.Controls.Add(this.databasesGridControl);
+            this.panelControl1.Controls.Add(this.gcDatabases);
             this.panelControl1.Dock = System.Windows.Forms.DockStyle.Left;
             this.panelControl1.Location = new System.Drawing.Point(0, 42);
             this.panelControl1.Margin = new System.Windows.Forms.Padding(4);
             this.panelControl1.Name = "panelControl1";
-            this.panelControl1.Size = new System.Drawing.Size(245, 572);
+            this.panelControl1.Size = new System.Drawing.Size(245, 618);
             this.panelControl1.TabIndex = 4;
+            // 
+            // popupMenu
+            // 
+            this.popupMenu.LinksPersistInfo.AddRange(new DevExpress.XtraBars.LinkPersistInfo[] {
+            new DevExpress.XtraBars.LinkPersistInfo(this.btnDeleteBackupDevice)});
+            this.popupMenu.Manager = this.barManager1;
+            this.popupMenu.Name = "popupMenu";
+            // 
+            // popupMenu1
+            // 
+            this.popupMenu1.LinksPersistInfo.AddRange(new DevExpress.XtraBars.LinkPersistInfo[] {
+            new DevExpress.XtraBars.LinkPersistInfo(this.btnDeleteBackup)});
+            this.popupMenu1.Manager = this.barManager1;
+            this.popupMenu1.Name = "popupMenu1";
+            // 
+            // bdsKeys
+            // 
+            this.bdsKeys.DataMember = "keys";
+            this.bdsKeys.DataSource = this.dS;
+            // 
+            // taKeys
+            // 
+            this.taKeys.ClearBeforeFill = true;
+            // 
+            // taBackupset
+            // 
+            this.taBackupset.ClearBeforeFill = true;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1089, 614);
+            this.ClientSize = new System.Drawing.Size(1129, 660);
             this.Controls.Add(this.panelControl2);
             this.Controls.Add(this.panelControl1);
             this.Controls.Add(this.barDockControlLeft);
@@ -586,19 +681,19 @@ namespace Backup_Restore
             this.Text = "Backup - Restore Database in SQL SERVER";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.barManager1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.databasesGridControl)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.databasesBindingSource)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gcDatabases)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bdsDatabases)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dS)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gvDatabases)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.panelControl2)).EndInit();
             this.panelControl2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.sP_STT_BACKUPGridControl)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.sP_STT_BACKUPBindingSource)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gridView2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bdsBackups)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gvBackups)).EndInit();
             this.sidePanel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.stackPanel2)).EndInit();
-            this.stackPanel2.ResumeLayout(false);
-            this.stackPanel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.panelRestorePoint)).EndInit();
+            this.panelRestorePoint.ResumeLayout(false);
+            this.panelRestorePoint.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.datePicker.Properties.CalendarTimeProperties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.datePicker.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.timePicker.Properties)).EndInit();
@@ -608,9 +703,14 @@ namespace Backup_Restore
             ((System.ComponentModel.ISupportInitialize)(this.txtDatabaseName.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtPosition.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chbxDeleteAllBackupBefore.Properties)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.backup_devicesBindingSource)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ds1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bdsBackupset)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bdsBackupDevices)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.panelControl1)).EndInit();
             this.panelControl1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.popupMenu)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.popupMenu1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bdsKeys)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -631,26 +731,20 @@ namespace Backup_Restore
         private DevExpress.XtraBars.BarButtonItem barButtonItem1;
         private DevExpress.XtraBars.BarButtonItem btnDisconnect;
         private DevExpress.XtraBars.BarButtonItem btnSettings;
-        private System.Windows.Forms.BindingSource databasesBindingSource;
+        private System.Windows.Forms.BindingSource bdsDatabases;
         private DS dS;
-        private DSTableAdapters.databasesTableAdapter databasesTableAdapter;
+        private DSTableAdapters.databasesTableAdapter taDatabases;
         private DSTableAdapters.TableAdapterManager tableAdapterManager;
-        private DevExpress.XtraGrid.GridControl databasesGridControl;
-        private DevExpress.XtraGrid.Views.Grid.GridView gridView1;
+        private DevExpress.XtraGrid.GridControl gcDatabases;
+        private DevExpress.XtraGrid.Views.Grid.GridView gvDatabases;
         private DevExpress.XtraGrid.Columns.GridColumn colname;
         private DevExpress.XtraEditors.PanelControl panelControl2;
-        private System.Windows.Forms.BindingSource sP_STT_BACKUPBindingSource;
-        private DSTableAdapters.SP_STT_BACKUPTableAdapter sP_STT_BACKUPTableAdapter;
-        private DevExpress.XtraGrid.GridControl sP_STT_BACKUPGridControl;
-        private DevExpress.XtraGrid.Views.Grid.GridView gridView2;
-        private System.Windows.Forms.BindingSource backup_devicesBindingSource;
-        private DSTableAdapters.backup_devicesTableAdapter backup_devicesTableAdapter;
+        private System.Windows.Forms.BindingSource bdsBackups;
+        private DSTableAdapters.SP_STT_BACKUPTableAdapter taBackups;
+        private System.Windows.Forms.BindingSource bdsBackupDevices;
+        private DSTableAdapters.backup_devicesTableAdapter taBackupDevices;
         private DevExpress.XtraEditors.TextEdit txtDatabaseName;
         private DevExpress.XtraBars.BarCheckItem chbxToPointInTime;
-        private DevExpress.XtraGrid.Columns.GridColumn colposition;
-        private DevExpress.XtraGrid.Columns.GridColumn colname1;
-        private DevExpress.XtraGrid.Columns.GridColumn colbackup_start_date;
-        private DevExpress.XtraGrid.Columns.GridColumn coluser_name;
         private DevExpress.Utils.Layout.StackPanel stackPanel1;
         private DevExpress.XtraEditors.LabelControl labelControl2;
         private DevExpress.XtraEditors.SidePanel sidePanel1;
@@ -658,10 +752,26 @@ namespace Backup_Restore
         private DevExpress.XtraEditors.DateEdit datePicker;
         private DevExpress.XtraEditors.LabelControl labelControl1;
         private DevExpress.XtraEditors.CheckEdit chbxDeleteAllBackupBefore;
-        private DevExpress.Utils.Layout.StackPanel stackPanel2;
+        private DevExpress.Utils.Layout.StackPanel panelRestorePoint;
         private DevExpress.XtraEditors.PanelControl panelControl1;
         private DevExpress.XtraEditors.LabelControl labelControl3;
         private DevExpress.XtraEditors.TextEdit txtPosition;
+        private DevExpress.XtraBars.BarButtonItem btnDeleteBackupDevice;
+        private DevExpress.XtraBars.PopupMenu popupMenu;
+        private DevExpress.XtraEditors.LabelControl lbInstruction;
+        private DevExpress.XtraBars.BarButtonItem btnDeleteBackup;
+        private DevExpress.XtraBars.PopupMenu popupMenu1;
+        private System.Windows.Forms.BindingSource bdsKeys;
+        private DSTableAdapters.keysTableAdapter taKeys;
+        private System.Windows.Forms.BindingSource bdsBackupset;
+        private DSTableAdapters.backupsetTableAdapter taBackupset;
+        private DevExpress.XtraGrid.GridControl sP_STT_BACKUPGridControl;
+        private DevExpress.XtraGrid.Views.Grid.GridView gvBackups;
+        private DevExpress.XtraGrid.Columns.GridColumn colposition;
+        private DevExpress.XtraGrid.Columns.GridColumn colname1;
+        private DevExpress.XtraGrid.Columns.GridColumn colbackup_start_date;
+        private DevExpress.XtraGrid.Columns.GridColumn coluser_name;
+        private DS ds1;
     }
 }
 

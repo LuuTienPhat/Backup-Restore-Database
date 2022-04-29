@@ -7,8 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DevExpress.Utils;
 using DevExpress.XtraBars;
+using DevExpress.XtraBars.Docking2010.Views.Tabbed;
 using DevExpress.XtraEditors;
+using DevExpress.XtraGrid.Views.Grid;
+using DevExpress.XtraGrid.Views.Grid.ViewInfo;
+using DevExpress.XtraSplashScreen;
 
 namespace Backup_Restore
 {
@@ -18,108 +23,107 @@ namespace Backup_Restore
         public MainForm()
         {
             InitializeComponent();
-            txtDatabaseName.DataBindings.Add(new Binding("EditValue", databasesBindingSource, "name", true));
-            txtPosition.DataBindings.Add(new Binding("EditValue", sP_STT_BACKUPBindingSource, "position", true));
+            txtDatabaseName.DataBindings.Add(new Binding("EditValue", bdsDatabases, "name", true));
+            txtPosition.DataBindings.Add(new Binding("EditValue", bdsBackups, "position", true));
             datePicker.DateTime = DateTime.Now;
             timePicker.Time = DateTime.Now;
+            lbInstruction.Visible = false;
+            panelRestorePoint.Visible = false;
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             // TODO: This line of code loads data into the 'dS.backup_devices' table. You can move, or remove it, as needed.
-            this.backup_devicesTableAdapter.Fill(this.dS.backup_devices);
+            //this.taBackupDevices.Connection.ConnectionString = Program.CONNECTION_STRING;
+            this.taBackupDevices.Fill(this.dS.backup_devices);
             // TODO: This line of code loads data into the 'dS.databases' table. You can move, or remove it, as needed.
-            this.databasesTableAdapter.Connection.ConnectionString = Program.CONNECTION_STRING;
-            this.databasesTableAdapter.Fill(this.dS.databases);
+            this.taDatabases.Connection.ConnectionString = Program.CONNECTION_STRING;
+            this.taDatabases.Fill(this.dS.databases);
 
-            if (Program.ConnectToSQL())
-            {
-                //XtraMessageBox.Show("Connect Failed", this.Name, MessageBoxButtons.OK);
-            }
-            else
-            {
-                //XtraMessageBox.Show("Connect Succesfully", "", MessageBoxButtons.OK);
-                //String query = "SELECT name, database_id FROM sys.databases WHERE (database_id >= 5) AND (NOT(name LIKE N'ReportServer%')) ORDER BY name";
-                //DataTable dt = Program.ExecSqlDataTable(query);
-                //databases = dt;
-                //dt.Columns.RemoveAt(1);
-                //databaseList.DataSource = dt;
-            }
+            //if (Program.ConnectToSQL())
+            //{
+            //XtraMessageBox.Show("Connect Failed", this.Name, MessageBoxButtons.OK);
+            // }
+            //else
+            //{
+            //XtraMessageBox.Show("Connect Succesfully", "", MessageBoxButtons.OK);
+            //String query = "SELECT name, database_id FROM sys.databases WHERE (database_id >= 5) AND (NOT(name LIKE N'ReportServer%')) ORDER BY name";
+            //DataTable dt = Program.ExecSqlDataTable(query);
+            //databases = dt;
+            //dt.Columns.RemoveAt(1);
+            //databaseList.DataSource = dt;
+            //}
             //string o = ((DataRowView)sP_STT_BACKUPBindingSource[sP_STT_BACKUPBindingSource.Position])["backup_start_date"].ToString();
         }
 
-        //btnDisconnect
-        private void btnDisconnect_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
-        {
-            this.Hide();
-            
-            new LoginForm().ShowDialog();
-            this.Close();
-        }
-
-        private void treeList1_FocusedNodeChanged(object sender, DevExpress.XtraTreeList.FocusedNodeChangedEventArgs e)
-        {
-
-        }
-
-        private void databasesGridControl_Click(object sender, EventArgs e)
-        {
-
-        }
-
-
+        //btnBackup
         private void btnBackup_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
-            string query_string;
-            string database_name = txtDatabaseName.Text.Trim();
-            string device_name = String.Format(Program.PREFIX_DEVICE_NAME, database_name);
+            string query_string; // chứa câu truy vấn
+            string database_name = txtDatabaseName.Text.Trim(); // lấy tên database
+            string backup_name;
+            bool isInit = false; // có xóa hết các database cũ trong device hay không?
 
+            if (database_name == "") return; // nếu database_name hoặc device_name rỗng thì return;
 
-            if (database_name == "" || device_name == "") return;
-
-            query_string = String.Format(Program.BACKUP_DATABASE, database_name, device_name);
-
-            string backup_descriptiton = XtraInputBox.Show("Enter backup description", "Backupset Name", "").Trim();
-            if (backup_descriptiton.Length > 0)
+            if (chbxDeleteAllBackupBefore.Checked == true) // nếu người dùng chấp nhận xóa hết backup
             {
-                query_string += " WITH NAME = N'" + backup_descriptiton + "'";
-            }
-
-            if (chbxDeleteAllBackupBefore.Checked == true)
-            {
-                if (XtraMessageBox.Show("All the old backups will be permanently deleted. Are you sure?", "Confirm", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+                if (XtraMessageBox.Show("All the old backups will be permanently deleted. Are you sure?", "Confirm", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK)
                 {
-                    query_string += ", INIT";
+                    isInit = true;
+                    //ClearBackupInBackupSet();
                 }
+                else return;
             }
 
-            int execute_result = Program.ExecSqlNonQuery(query_string, Program.CONNECTION_STRING, "");
+            backup_name = XtraInputBox.Show("Enter backup description", "Backupset Name", "").Trim(); // lấy tên của bản backup
+
+            query_string = Query.CreateBackupQuery(database_name, backup_name, isInit); //tạo câu truy vấn backup database
+
+            //Wait Form
+            SplashScreenManager.ShowForm(this, typeof(WaitForm), true, true, false);
+            SplashScreenManager.Default.SetWaitFormDescription("Backuping...");
+            SplashScreenManager.Default.SetWaitFormCaption("Please Wait!");
+
+            int execute_result;
+
+            try
+            {
+                execute_result = Program.ExecSqlNonQuery(query_string, Program.CONNECTION_STRING, "");
+            }
+            finally
+            {
+                SplashScreenManager.CloseForm(false);
+            }
 
             if (execute_result != 0)
             {
-                XtraMessageBox.Show("Error while backing up " + database_name, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                CustomMessageBox.Show(CustomMessageBox.Type.ERROR, $"Error while backing up database [{database_name}]");
                 return;
             }
             else
             {
-                XtraMessageBox.Show("Backed up successfully", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                CustomMessageBox.Show(CustomMessageBox.Type.SUCCESS, $"Back up database [{database_name}] successfully");
                 LoadBackups(database_name);
+                LoadBackupDevices();
                 btnRestore.Enabled = true;
             }
         }
 
-        private bool IsPointInTimeValid(string point_in_time_string, string selected_backup_time_string)
+        //Kiểm tra thời gian lựa chọn có phù hợp hay không?
+        private bool IsPointInTimeValid(string PointInTimeString, string selectedBakupTimeString)
         {
-            DateTime selected_backup_time = DateTime.Parse(selected_backup_time_string);
-            DateTime point_in_time = DateTime.Parse(point_in_time_string);
+            DateTime selected_backup_time = DateTime.Parse(selectedBakupTimeString);
+            DateTime point_in_time = DateTime.Parse(PointInTimeString);
 
-            if (point_in_time > DateTime.Now)
+            if (point_in_time > DateTime.Now) // nếu thời gian lựa chọn lớn hơn thời điểm hiện tại
             {
                 CustomMessageBox.Show(CustomMessageBox.Type.WARNING, "The backup point must be after the selected backup date and before the moment");
                 return false;
             }
-            else if (point_in_time.Date == DateTime.Now.Date)
+            else if (point_in_time.Date == DateTime.Now.Date) // nếu ngày chọn phục hồi == ngày hiện tại
             {
+                // Kiểm tra xem thời gian chọn phục hồi có nhỏ hơn thời điểm hiện tại 3 phút hay không
                 if (point_in_time.TimeOfDay.Add(new TimeSpan(0, 1, 0)) >= DateTime.Now.TimeOfDay)
                 {
                     CustomMessageBox.Show(CustomMessageBox.Type.WARNING, "The restore time must be before the moment time at least 1 minute");
@@ -128,13 +132,14 @@ namespace Backup_Restore
             }
 
 
-            if (point_in_time < selected_backup_time)
+            if (point_in_time < selected_backup_time) // nếu ngày chọn phục hồi < ngày chọn bản backup gần nhất
             {
                 CustomMessageBox.Show(CustomMessageBox.Type.WARNING, "The backup point must be after the selected backup date and before the moment");
                 return false;
             }
             else
             {
+                //kiểm tra xem ngày chọn phục hồi có lớn hơn thời gian backup gần nhất 3 phút hay không
                 if (point_in_time.TimeOfDay.Subtract(new TimeSpan(0, 1, 0)) <= selected_backup_time.TimeOfDay)
                 {
                     CustomMessageBox.Show(CustomMessageBox.Type.WARNING, "The restore time must be after the last backup time at least 1 minute");
@@ -159,228 +164,178 @@ namespace Backup_Restore
             return true;
         }
 
-        private async Task<int> RestoreToPointInTime(string databaseName, int position, string pointInTime, string selectedBackupTime)
+        private void Restore(string databaseName, int position)
         {
-            string device_name = string.Format(Program.PREFIX_DEVICE_NAME, databaseName);
-            string backup_log_path = Program.BACKUP_PATH + "\\" + "LOG_" + databaseName + ".trn";
-            string device_path = Program.BACKUP_PATH + "\\" + "DEVICE_" + databaseName + ".bak";
-            string excute_statement;
+            string queryString = Query.CreateRestoreQuery(databaseName, position);
 
-            int excute_result = 0;
+            //Wait Form
+            SplashScreenManager.ShowForm(this, typeof(WaitForm), true, true, false);
+            SplashScreenManager.Default.SetWaitFormCaption("Restoring...");
+            SplashScreenManager.Default.SetWaitFormDescription("Please Wait!");
 
-            excute_statement = "ALTER DATABASE [" + databaseName + "] SET SINGLE_USER WITH ROLLBACK IMMEDIATE\n" +
-                               "BACKUP LOG [" + databaseName + "] TO DISK = '" + backup_log_path + "' WITH INIT\n" +
-                               "USE MASTER\n" +
-                               "RESTORE DATABASE [" + databaseName + "] FROM [" + device_name + "] WITH FILE = " + position + ", REPLACE, NORECOVERY\n" +
-                               "RESTORE DATABASE [" + databaseName + "] FROM DISK = '" + backup_log_path + "' WITH STOPAT = '" + pointInTime + "'";
-
-            excute_result = await Task.Run(() =>
+            int execute_result;
+            try
             {
-                return Program.ExecSqlNonQuery(excute_statement, Program.CONNECTION_STRING, "Lỗi phục hồi CSDL.");
-            });
+                execute_result = Program.ExecSqlNonQuery(queryString, Program.CONNECTION_STRING, "Lỗi phục hồi CSDL.");
+            }
+            finally
+            {
+                SplashScreenManager.CloseForm(false);
+            }
 
-            //if (excute_result == 0)
+            if (execute_result == 0)
+            {
+                CustomMessageBox.Show(CustomMessageBox.Type.SUCCESS, $"Restore database [{databaseName}] successfully");
+            }
+        }
+
+        private void RestoreToPointInTime(string databaseName, int position, string pointInTime)
+        {
+            string excute_statement = Query.CreateRestoreToPointInTimeQuery(databaseName, position, pointInTime);
+
+            SplashScreenManager.ShowForm(this, typeof(WaitForm), true, true, false);
+            SplashScreenManager.Default.SetWaitFormCaption("Restoring...");
+            SplashScreenManager.Default.SetWaitFormDescription("Please Wait!");
+
+            int execute_result;
+            try
+            {
+                execute_result = Program.ExecSqlNonQuery(excute_statement, Program.CONNECTION_STRING, "Lỗi phục hồi CSDL.");
+            }
+            finally
+            {
+                SplashScreenManager.CloseForm(false);
+            }
+
+            if (execute_result == 0)
+            {
+                CustomMessageBox.Show(CustomMessageBox.Type.SUCCESS, $"Restore database [{databaseName}] successfully");
+            }
+            //else
             //{
-            //    excute_statement = "";
-
-            //    excute_result = await Task.Run(() =>
-            //    {
-            //        return Program.ExecSqlNonQuery(excute_statement, Program.CONNECTION_STRING, "Lỗi phục hồi CSDL.");
-            //    });
-
-            //    SetDatabaseToMultiUser(databaseName);
+            //    XtraMessageBox.Show($"Restore database [{databaseName}] failed", "Erorr", MessageBoxButtons.OK, MessageBoxIcon.Error);
             //}
 
-            SetDatabaseToMultiUser(databaseName);
-
-            return excute_result;
+            //else if (execute_result != 0)
+            //{
+            //    string deviceName = Interpolation.CreateDeviceName(databaseName);
+            //    excute_statement = $"RESTORE DATABASE [{databaseName}] FROM [{deviceName}] WITH FILE = {position}\n";
+            //    execute_result = Program.ExecSqlNonQuery(excute_statement, Program.CONNECTION_STRING, "Lỗi phục hồi CSDL.");
+            //}
         }
 
-
-        private async void SetDatabaseToMultiUser(string database_name)
+        //btnRestore
+        private void btnRestore_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
-            string excute_statement = "ALTER DATABASE [" + database_name + "]  SET MULTI_USER";
+            string databaseName = txtDatabaseName.Text.Trim(); // lấy tên database đang chọn hiện tại
+            int position = int.Parse(((DataRowView)bdsBackups[bdsBackups.Position])["position"].ToString()); // lấy vị trí bản backup
 
-            await Task.Run(() =>
-            {
-                Program.ExecSqlNonQuery(excute_statement, Program.CONNECTION_STRING, "Lỗi phục hồi CSDL.");
-            });
-        }
-
-        private async void btnRestore_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
-        {
-            string database_name = txtDatabaseName.Text.Trim();
-            string device_name = string.Format(Program.PREFIX_DEVICE_NAME, database_name);
-            string queryString;
-            int position = int.Parse(((DataRowView)sP_STT_BACKUPBindingSource[sP_STT_BACKUPBindingSource.Position])["position"].ToString());
-
-            if (this.sP_STT_BACKUPBindingSource.Count == 0)
+            // nếu không có bản backup nào 
+            if (this.bdsBackups.Count == 0)
             {
                 CustomMessageBox.Show(CustomMessageBox.Type.WARNING, "There is no backup"); return;
             }
-
+            //nếu không chọn bản backup nào
             if (position == 0)
             {
                 CustomMessageBox.Show(CustomMessageBox.Type.WARNING, "Please choose one backup to restore"); return;
             }
 
+            //Đóng kết nối của chính ta
             if (Program.conn != null && Program.conn.State == ConnectionState.Open)
             {
                 Program.conn.Close(); //Đóng kết nối của chính ta
             }
 
-
-            if (database_name == "" || device_name == "") return;
-
+            //nếu không chọn thì phục hồi bình thường
             if (chbxToPointInTime.Checked == false)
             {
-                queryString = string.Format(Program.RESTORE_DATABASE, database_name, device_name, position.ToString());
-
-                int exucute_result = Program.ExecSqlNonQuery(queryString, Program.CONNECTION_STRING, "Lỗi phục hồi CSDL.");
-                if (exucute_result == 0)
-                {
-                    //
-                    //
-                    XtraMessageBox.Show($"Restore database [{database_name}] successfully", "Sucess", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                else
-                {
-                    XtraMessageBox.Show($"Restore database [{database_name}] failed", "Erorr", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    //
-                }
+                Restore(databaseName, position);
             }
-            else
+            else //chọn phục hồi về 1 điểm bất kì
             {
+                position = int.Parse(((DataRowView)bdsBackups[0])["position"].ToString());
+
                 string date_picked = datePicker.DateTime.Date.ToString("yyyy-MM-dd");
                 string time_picked = timePicker.Time.ToString("HH:mm:ss");
                 string point_in_time_string = date_picked + " " + time_picked;
-                string selected_backup_time_string = ((DataRowView)sP_STT_BACKUPBindingSource[sP_STT_BACKUPBindingSource.Position])["backup_start_date"].ToString();
+                //string selected_backup_time_string = ((DataRowView)bdsBackups[bdsBackups.Position])["backup_start_date"].ToString();
+
+                string selected_backup_time_string = ((DataRowView)bdsBackups[0])["backup_start_date"].ToString();
                 DateTime selected_backup_time = DateTime.Parse(selected_backup_time_string);
                 selected_backup_time_string = selected_backup_time.ToString("yyyy-MM-dd HH:mm:ss");
 
                 if (IsPointInTimeValid(point_in_time_string, selected_backup_time_string))
                 {
-                    string backup_log_path = Program.BACKUP_PATH + "\\" + "LOG_" + database_name + ".trn";
-
-                    queryString = string.Format(Program.RESTORE_DATABASE_TO_POINT_IN_TIME, database_name, backup_log_path, position, point_in_time_string);
-
-                    int exucute_result = await RestoreToPointInTime(database_name, position, point_in_time_string, selected_backup_time_string);
-                    //Program.ExecSqlNonQuery(queryString, Program.CONNECTION_STRING, "Lỗi phục hồi CSDL.");
-                    if (exucute_result == 0)
+                    if (XtraMessageBox.Show($"Are you sure restore database to '{point_in_time_string}'", "Confirm", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
                     {
-
-                        XtraMessageBox.Show($"Restore database [{database_name}] successfully", "Sucess", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        RestoreToPointInTime(databaseName, position, point_in_time_string);
                     }
-                    else
-                    {
-                        XtraMessageBox.Show($"Restore database [{database_name}] failed", "Erorr", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-                    }
                 }
             }
-        }
 
-        private void LoadBackups(string database_name)
-        {
-            if (database_name.Equals("")) return;
-            try
-            {
-                this.sP_STT_BACKUPTableAdapter.Connection.ConnectionString = Program.CONNECTION_STRING;
-                this.sP_STT_BACKUPTableAdapter.Fill(this.dS.SP_STT_BACKUP, database_name);
-                if (sP_STT_BACKUPBindingSource.Count == 0)
-                {
-                    txtPosition.Text = "0";
-                }
-                else
-                {
-                    txtPosition.Text = int.Parse(((DataRowView)sP_STT_BACKUPBindingSource[0])["position"].ToString()).ToString();
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            Program.ConnectToSQL(); // kết nối lại đến sql server
         }
 
         private void sP_STT_BACKUPGridControl_Click(object sender, EventArgs e)
         {
-            if (sP_STT_BACKUPBindingSource.Position == -1 || sP_STT_BACKUPBindingSource.Count == 0 || sP_STT_BACKUPGridControl.DataSource == null)
+            if (bdsBackups.Position == -1 || bdsBackups.Count == 0 || sP_STT_BACKUPGridControl.DataSource == null)
             {
                 txtPosition.Text = "0";
             }
             else
             {
-                int position = int.Parse(((DataRowView)sP_STT_BACKUPBindingSource[sP_STT_BACKUPBindingSource.Position])["position"].ToString());
+                int position = int.Parse(((DataRowView)bdsBackups[bdsBackups.Position])["position"].ToString());
                 txtPosition.Text = position.ToString();
             }
         }
 
-        private void unknowMethod()
-        {
-            this.backup_devicesTableAdapter.Connection.ConnectionString = Program.CONNECTION_STRING;
-            this.backup_devicesTableAdapter.Fill(this.dS.backup_devices);
-
-            this.databasesTableAdapter.Connection.ConnectionString = Program.CONNECTION_STRING;
-            this.databasesTableAdapter.Fill(this.dS.databases);
-
-            databasesBindingSource.Position = 0;
-            //databasesGridControl_Click(sender, e);
-            //dateStop.DateTime = DateTime.Now.Date;
-            //timeStop.Time = DateTime.Now;
-            //panelThoigian.Visible = btnNangCao.Checked = false;
-        }
-
+        //btnNewDevice
         private void btnNewDevice_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
-            string dev_type = "disk";
-            string logical_name = String.Format(Program.PREFIX_DEVICE_NAME, txtDatabaseName.Text.Trim());
-            string physical_name = Program.BACKUP_PATH + "\\" + logical_name + ".dat";
-            string query_string = String.Format(Program.CREATE_DEVICE, dev_type, logical_name, physical_name);
+            string databaseName = txtDatabaseName.Text.Trim();
 
-            int result = Program.ExecSqlNonQuery(query_string, Program.CONNECTION_STRING, "");
+            string devType = "disk"; //kiểu của backup device, nvarchar(20), backup device là 1 file trên ổ đĩa cục bộ
+            string logicalName = Interpolation.CreateDeviceName(databaseName); // logical name chính là device name trên ổ đĩa
+            string physicalName = Interpolation.CreateDeviceAbsolutePath(logicalName); // tạo đường dẫn đến file backup device đó, extension mặc định là '.dat'
+            string queryString = Query.CreateBackupDeviceQuery(devType, logicalName, physicalName); // tạo câu truy vấn tạo backup device
+
+            int result = Program.ExecSqlNonQuery(queryString, Program.CONNECTION_STRING, "");
             if (result == 0)
             {
-                XtraMessageBox.Show("Create Backup Device Successfully", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                this.backup_devicesTableAdapter.Fill(this.dS.backup_devices);
-                int database_position = databasesBindingSource.Position;
-                databasesBindingSource.MoveFirst();
-                databasesBindingSource.Position = database_position;
+                CustomMessageBox.Show(CustomMessageBox.Type.SUCCESS, "Create Backup Device Successfully");
+
+                LoadBackupDevices();
+                LoadBackups(databaseName); // load các bản backup trong device đó
+
+                int databasePosition = bdsDatabases.Position;
+                bdsDatabases.MoveFirst();
+                bdsDatabases.Position = databasePosition;
             }
         }
 
-        private void barCheckItem1_CheckedChanged(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
-        {
-
-        }
-
-        private void LoadDatabases()
-        {
-            this.databasesTableAdapter.Fill(this.dS.databases);
-        }
-
+        //btnRefresh
         private void btnRefresh_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
             LoadDatabases();
-        }
-
-        private void databasesGridControl_ViewRegistered(object sender, DevExpress.XtraGrid.ViewOperationEventArgs e)
-        {
-
+            LoadBackupDevices();
         }
 
         private bool HasDevice(string databaseName)
         {
-            string logical_name = string.Format(Program.PREFIX_DEVICE_NAME, databaseName);
-            if (backup_devicesBindingSource.Find("name", logical_name) != -1)
+            string logical_name = Interpolation.CreateDeviceName(databaseName); //Test -> DEVICE_Test
+            if (bdsBackupDevices.Find("name", logical_name) != -1)
             {
                 return true;
             }
             return false;
         }
 
+        //Kiểm tra xem backup device đang chọn có bản backup nào không?
         private bool HasBackups()
         {
-            if (this.sP_STT_BACKUPBindingSource.Count == 0 || this.sP_STT_BACKUPBindingSource.DataSource == null || this.sP_STT_BACKUPBindingSource.Position == -1)
+            if (this.bdsBackups.Count == 0 || this.bdsBackups.DataSource == null || this.bdsBackups.Position == -1)
                 return false;
             return true;
         }
@@ -395,9 +350,9 @@ namespace Backup_Restore
                     return;
                 }
 
-                this.sP_STT_BACKUPTableAdapter.Fill(this.dS.SP_STT_BACKUP, database_name);
+                LoadBackups(database_name);
 
-                if (HasDevice(database_name))
+                if (HasDevice(database_name)) // nếudatabase đó đã tạo backup device
                 {
                     ToggleBarItems(true);
                     btnNewDevice.Enabled = false;
@@ -410,7 +365,7 @@ namespace Backup_Restore
                 else
                 {
                     ToggleBarItems(false);
-                    btnNewDevice.Enabled = false;
+                    btnNewDevice.Enabled = true;
                 }
             }
             catch (Exception ex)
@@ -418,8 +373,6 @@ namespace Backup_Restore
                 XtraMessageBox.Show(ex.Message, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
-
 
         private void ToggleBarItems(bool isEnable)
         {
@@ -430,5 +383,178 @@ namespace Backup_Restore
 
             btnNewDevice.Enabled = btnSettings.Enabled = btnDisconnect.Enabled = btnRefresh.Enabled = true;
         }
+
+        //btnDisconnect
+        private void btnDisconnect_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        {
+            this.Hide();
+            new LoginForm().ShowDialog();
+            this.Close();
+        }
+
+        private void gvDatabases_RowCellClick(object sender, RowCellClickEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                if (HasDevice(txtDatabaseName.Text))
+                {
+                    btnDeleteBackupDevice.Enabled = true;
+                }
+                else
+                {
+                    btnDeleteBackupDevice.Enabled = false;
+                }
+                popupMenu.ShowPopup(Cursor.Position);
+            }
+        }
+
+        //btnDeleteBackupDevice
+        private void btnDeleteBackupDevice_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            XtraMessageBox.SmartTextWrap = true;
+            if (XtraMessageBox.Show("The backup device of this database and all of backup within it will be deleted. Are you sure?", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK)
+            {
+                string databaseName = txtDatabaseName.Text.Trim();
+                string deviceName = Interpolation.CreateDeviceName(databaseName);
+                string queryString = Query.CreateDeleteBackupDeviceQuery(deviceName);
+
+                int result = Program.ExecSqlNonQuery(queryString, Program.CONNECTION_STRING, "");
+                if (result == 0)
+                {
+                    CustomMessageBox.Show(CustomMessageBox.Type.SUCCESS, "The backup device deleted successfully!");
+                    ToggleBarItems(false);
+                    btnNewDevice.Enabled = true;
+                }
+                //else
+                //    CustomMessageBox.Show(CustomMessageBox.Type.ERROR, "Error while deleting backup device");
+                LoadBackupDevices();
+            }
+        }
+
+        private void chbxToPointInTime_CheckedChanged(object sender, ItemClickEventArgs e)
+        {
+            if (chbxToPointInTime.Checked)
+            {
+                lbInstruction.Visible = true;
+                panelRestorePoint.Visible = true;
+            }
+            else
+            {
+                lbInstruction.Visible = false;
+                panelRestorePoint.Visible = false;
+            }
+        }
+
+        //Load các bản backup trong database đã chọn
+        private void LoadBackups(string databaseName)
+        {
+            if (databaseName.Equals("")) return;
+            try
+            {
+                this.taBackups.Connection.ConnectionString = Program.CONNECTION_STRING;
+                this.taBackups.Fill(this.dS.SP_STT_BACKUP, databaseName);
+                if (bdsBackups.Count == 0)
+                {
+                    txtPosition.Text = "0";
+                }
+                else
+                {
+                    txtPosition.Text = int.Parse(((DataRowView)bdsBackups[0])["position"].ToString()).ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomMessageBox.Show(CustomMessageBox.Type.ERROR, ex.Message);
+            }
+        }
+
+        //Load các backup devices
+        private void LoadBackupDevices()
+        {
+            this.taBackupDevices.Connection.ConnectionString = Program.CONNECTION_STRING;
+            this.taBackupDevices.Fill(this.dS.backup_devices);
+        }
+
+        //Load các database
+        private void LoadDatabases()
+        {
+            this.taDatabases.Connection.ConnectionString = Program.CONNECTION_STRING;
+            this.taDatabases.Fill(this.dS.databases);
+        }
+
+        private int DeleteBackup(int backupSetId)
+        {
+            taKeys.Connection.ConnectionString = Program.CONNECTION_STRING;
+            taKeys.Fill(this.dS.keys, backupSetId);
+            string query = Query.CreateDeleteBackupQuery(backupSetId);
+
+            int restoreCount = bdsKeys.Count;
+            if (restoreCount > 0)
+            {
+                string queryDeleteRestoreHistory = "";
+                for (int index = 0; index < restoreCount; index++)
+                {
+                    string restore_history_id = ((DataRowView)bdsKeys[index])["restore_history_id"].ToString();
+                    queryDeleteRestoreHistory += Query.CreateDeleteRestoreHistoryQuery(restore_history_id);
+                }
+                query = queryDeleteRestoreHistory + query;
+            }
+
+            return Program.ExecSqlNonQuery(query, Program.CONNECTION_STRING, "");
+        }
+
+        private void btnDeleteBackup_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            int backupSetId = int.Parse(((DataRowView)bdsBackups.Current)["backup_set_id"].ToString());
+
+            if (XtraMessageBox.Show("Are yout sure to delete this backup?", "Confirm",
+                MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.Cancel)
+                return;
+
+            int resultExec = DeleteBackup(backupSetId);
+
+            if (resultExec == 0)
+            {
+                CustomMessageBox.Show(CustomMessageBox.Type.SUCCESS, "The backup deleted successfully");
+            }
+            else
+            {
+                CustomMessageBox.Show(CustomMessageBox.Type.ERROR, $"Error while deleting backup\nError code: {resultExec}");
+            }
+
+            string databaseName = txtDatabaseName.Text.Trim();
+            LoadBackups(databaseName);
+            if (!HasBackups())
+            {
+                btnRestore.Enabled = chbxToPointInTime.Enabled = false;
+            }
+            else
+            {
+                btnRestore.Enabled = chbxToPointInTime.Enabled = true;
+            }
+        }
+
+        private void gvBackups_RowCellClick(object sender, RowCellClickEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                popupMenu1.ShowPopup(Cursor.Position);
+            }
+        }
+
+        private void ClearBackupInBackupSet()
+        {
+            string dbName = txtDatabaseName.Text;
+            // trong bdsBackup có thể không đếm đủ toàn bộ backup set
+            this.taBackupset.Connection.ConnectionString = Program.CONNECTION_STRING;
+            this.taBackupset.Fill(this.dS.backupset, dbName);
+            int countBackup = this.bdsBackupset.Count;
+            for (int index = 0; index < countBackup; index++)
+            {
+                string backup_set_id = ((DataRowView)this.bdsBackupset[index])["backup_set_id"].ToString();
+                DeleteBackup(int.Parse(backup_set_id));
+            }
+        }
+
     }
 }

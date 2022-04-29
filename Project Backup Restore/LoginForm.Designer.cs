@@ -46,7 +46,6 @@
             this.labelControl4 = new DevExpress.XtraEditors.LabelControl();
             this.txtLoginName = new DevExpress.XtraEditors.TextEdit();
             this.lbTitle = new DevExpress.XtraEditors.LabelControl();
-            this.splashScreenManager1 = new DevExpress.XtraSplashScreen.SplashScreenManager(this, typeof(global::Backup_Restore.WaitForm), true, true);
             ((System.ComponentModel.ISupportInitialize)(this.panelControl5)).BeginInit();
             this.panelControl5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.panelControl1)).BeginInit();
@@ -97,7 +96,7 @@
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
             this.cbxServerName.Size = new System.Drawing.Size(295, 24);
             this.cbxServerName.TabIndex = 18;
-            this.cbxServerName.QueryPopUp += new System.ComponentModel.CancelEventHandler(this.CmbServerName_QueryPopUp);
+            this.cbxServerName.QueryPopUp += new System.ComponentModel.CancelEventHandler(this.cbxServerName_QueryPopUp);
             // 
             // lbServerName
             // 
@@ -214,7 +213,7 @@
             // 
             // txtPassword
             // 
-            this.txtPassword.EditValue = "123";
+            this.txtPassword.EditValue = "";
             this.txtPassword.Location = new System.Drawing.Point(7, 31);
             this.txtPassword.Margin = new System.Windows.Forms.Padding(4);
             this.txtPassword.Name = "txtPassword";
@@ -266,7 +265,7 @@
             // 
             // txtLoginName
             // 
-            this.txtLoginName.EditValue = "sa";
+            this.txtLoginName.EditValue = "";
             this.txtLoginName.Location = new System.Drawing.Point(7, 31);
             this.txtLoginName.Margin = new System.Windows.Forms.Padding(4);
             this.txtLoginName.Name = "txtLoginName";
@@ -290,10 +289,6 @@
             this.lbTitle.Size = new System.Drawing.Size(212, 25);
             this.lbTitle.TabIndex = 10;
             this.lbTitle.Text = "Connect to SQL SERVER";
-            // 
-            // splashScreenManager1
-            // 
-            this.splashScreenManager1.ClosingDelay = 500;
             // 
             // LoginForm
             // 
@@ -350,6 +345,5 @@
         private DevExpress.XtraEditors.TextEdit txtLoginName;
         private DevExpress.XtraEditors.LabelControl lbTitle;
         private DevExpress.XtraEditors.ComboBoxEdit cbxServerName;
-        private DevExpress.XtraSplashScreen.SplashScreenManager splashScreenManager1;
     }
 }
