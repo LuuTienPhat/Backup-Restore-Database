@@ -34,60 +34,6 @@ namespace Backup_Restore
         public static int flagRestore = 0; //để kiểm tra user có phục hồi csdl
         public static string BACKUP_PATH = "C:\\Backup";
 
-        /// <summary>
-        /// {0} dev_type
-        /// {1} logical_name or you can name after database_name
-        /// {2} the path to device file on disk
-        /// </summary>
-        public static string CREATE_DEVICE = "EXEC sys.sp_addumpdevice @devtype = '{0}', @logicalname = N'{1}', @physicalname = N'{2}'";
-
-        /// <summary>
-        /// {0} database_name
-        /// </summary>
-        public static string PREFIX_DEVICE_NAME = "DEVICE_{0}";
-
-        /// <summary>
-        /// {0} database_name
-        /// {1} device_name
-        /// </summary>
-        public static string BACKUP_DATABASE = "BACKUP DATABASE [{0}] TO [{1}]";
-        public static string BACKUP_DATABASE_WIT_INIT = "BACKUP DATABASE [{0}] TO [{1}] WITH INIT";
-
-
-        /// <summary>
-        /// {0} database_name
-        /// {1} device_name
-        /// {2} position in backupset
-        /// </summary>
-        public static string RESTORE_DATABASE =
-                            "ALTER DATABASE [{0}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE\n" +
-                            "USE tempdb\n" +
-                            "RESTORE DATABASE [{0}] FROM [{1}] WITH FILE = {2}, REPLACE\n" +
-                            "ALTER DATABASE [{0}]  SET MULTI_USER";
-
-
-        /// <summary>
-        /// {0} database_name
-        /// {1} backup_log path
-        /// {2} position 
-        /// {3} point_in_time
-        /// </summary>
-        public static string RESTORE_DATABASE_TO_POINT_IN_TIME =
-                            "ALTER DATABASE [{0}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE\n" +
-                            "BACKUP LOG [{0}] TO DISK = '{1}' WITH INIT\n" +
-                            "USE MASTER\n" +
-                            "RESTORE DATABASE [{0}] FROM DISK = '{2}' WITH NORECOVERY\n" +
-                            "RESTORE DATABASE [{0}] FROM DISK = '{1}' WITH STOPAT = '{3}'" +
-                            "ALTER DATABASE [{0}]  SET MULTI_USER";
-
-        public static string DELETE_BACKUP = "";
-
-        /// <summary>
-        /// {0} device_name 
-        /// </summary>
-        public static string DELETE_BACKUP_DEVICE = "EXEC sp_dropdevice '{0}', 'delfile' ";
-
-
         public static bool ConnectToSQL()
         {
             if (Program.conn != null && Program.conn.State == ConnectionState.Open)
@@ -102,9 +48,9 @@ namespace Backup_Restore
                 return true;
             }
 
-            catch (Exception e)
+            catch (Exception ex)
             {
-                CustomMessageBox.Show(CustomMessageBox.Type.ERROR, "Lỗi kết nối cơ sở dữ liệu.\nBạn xem lại user name và password.\n " + e.Message);
+                //CustomMessageBox.Show(CustomMessageBox.Type.ERROR, "Lỗi kết nối cơ sở dữ liệu.\nBạn xem lại user name và password.\n " + e.Message);
                 return false;
             }
         }
